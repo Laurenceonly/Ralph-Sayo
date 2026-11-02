@@ -29,6 +29,12 @@ npm run build
 npm run preview
 ```
 
+Check Vue and TypeScript types before pushing code changes:
+
+```bash
+npm run typecheck
+```
+
 Performance investigation, targeted optimizations, local Lighthouse measurements, and remaining suggestions: [performance review](docs/performance-review.md).
 
 ## Content maintenance
