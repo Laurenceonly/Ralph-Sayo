@@ -41,5 +41,4 @@ logs
 /output/
 
 # Local design-detector state
-.impeccable/hook.cache.json
-.impeccable/config.local.json
+/.impeccable/
