@@ -9,38 +9,24 @@
   </p>
 </div>
 
-## Selected work
+## About my portfolio
 
-| Project | Overview | Links |
-| --- | --- | --- |
-| **GraphiScan** | A capstone project that uses a convolutional neural network to screen handwriting for signs of dysgraphia, with student records and evaluator access. | [Live app](https://graphiscan.vercel.app/) · [Source](https://github.com/Laurenceonly/Graphiscan) |
-| **Odyssey** | An interactive 3D solar system built with Three.js, featuring guided exploration and field guides. | [Play in browser](https://odyssey-explorer-psi.vercel.app/) · [Source](https://github.com/Laurenceonly/Odyssey-Space-Exploration-Game) |
+Hi, I’m Ralph. I build web and mobile applications, and I use this portfolio to share what I’ve built, the technologies I work with, and my experience in development and technical operations.
 
-## About the site
+## What I’ve built
 
-The portfolio is built with Nuxt 4, Vue 3, TypeScript, and custom CSS. It uses prerendered HTML, responsive imagery, locally hosted fonts, and light and dark themes that follow system preferences. Theme and interface transitions respect reduced-motion settings.
+**GraphiScan** · I led development for our three-person capstone team. We built a handwriting screening tool that uses a convolutional neural network and gives evaluators access to student records. [View GraphiScan](https://graphiscan.vercel.app/)
 
-## Local development
+**Odyssey** · I built a browser-based 3D solar system with guided exploration and interactive field guides. [Explore Odyssey](https://odyssey-explorer-psi.vercel.app/)
 
-Use Node.js 24 LTS and npm.
+## My stack
 
-```sh
-npm ci
-npm run dev
-```
-
-| Command | Purpose |
+| Area | Tools I use |
 | --- | --- |
-| `npm run typecheck` | Validate Vue and TypeScript source |
-| `npm run build` | Create the production build |
-| `npm run preview` | Serve the production build locally |
+| Web development | Vue, Nuxt, React, Next.js, TypeScript, and Three.js |
+| Mobile development | Flutter, React Native, and Capacitor |
+| APIs and data | Python, Flask, Node.js, Laravel, MySQL, and PostgreSQL |
+| Machine learning and computer vision | TensorFlow, Keras, and OpenCV |
+| Design and deployment | Figma, Git, GitHub, Docker, and Vercel |
 
-## Repository layout
-
-| Location | Contents |
-| --- | --- |
-| [`app/app.vue`](app/app.vue) | Intro, theme controls, and project gallery |
-| [`app/components/PortfolioDetails.vue`](app/components/PortfolioDetails.vue) | Skills, credentials, experience, and contact |
-| [`app/assets/css/main.css`](app/assets/css/main.css) | Design tokens, responsive layouts, and transitions |
-| [`public/`](public/) | Published images, fonts, and icons |
-| [`nuxt.config.ts`](nuxt.config.ts) | Prerendering, color mode, and asset caching |
+I built this portfolio with **Nuxt 4, Vue 3, TypeScript, and custom CSS** and deployed it on **Vercel**.
