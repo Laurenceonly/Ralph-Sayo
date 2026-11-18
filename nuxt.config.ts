@@ -9,6 +9,17 @@ export default defineNuxtConfig({
   modules: ['@nuxtjs/color-mode', ...(process.env.VERCEL ? ['@vercel/analytics'] : [])],
 
   css: ['~/assets/css/main.css'],
+  vite: {
+    server: {
+      fs: {
+        deny: [
+          '**/.env', '**/.env.*', '**/.envrc', '**/*.{crt,pem,key,p12,pfx}',
+          '**/.git/**', '**/.private/**', '**/.aws/**', '**/.ssh/**', '**/.vercel/**',
+          '**/output/**', '**/.playwright-cli/**',
+        ],
+      },
+    },
+  },
 
   nitro: {
     compressPublicAssets: true,

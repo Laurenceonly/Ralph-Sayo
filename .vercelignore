@@ -1,0 +1,12 @@
+.private/
+output/
+.playwright-cli/
+.aws/
+.ssh/
+.env*
+**/*.pem
+**/*.key
+**/*.p12
+**/*.pfx
+public/resume/
+public/certificates/

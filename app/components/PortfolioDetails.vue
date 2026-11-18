@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 
-const email = 'ralphlaurencesayo@gmail.com'
 const contributionChartFailed = ref(false)
 const githubChartViewport = ref<HTMLElement | null>(null)
 let githubChartResizeObserver: ResizeObserver | undefined
@@ -118,21 +117,16 @@ const skillColors: Record<string, string> = {
   CERTIFICATIONS
 ======================================== */
 
-// pdfUrl points to the certificate PDF itself, served from your
-// project's /public folder (e.g. put the files in
-// public/certificates/ and reference them as /certificates/x.pdf).
 const certifications = [
   {
     title: 'CCNA: Introduction to Networks',
     issuer: 'Davao del Norte State College · Cisco Networking Academy',
     date: 'May 2025',
-    pdfUrl: '/certificates/ccna1.pdf',
   },
   {
     title: 'CCNA: Switching, Routing, and Wireless Essentials',
     issuer: 'Davao del Norte State College · Cisco Networking Academy',
     date: 'Dec 2025',
-    pdfUrl: '/certificates/ccna2.pdf',
   },
 ]
 
@@ -217,95 +211,6 @@ function brandIconUrl(tech: string) {
   SOCIAL / CONTACT LINKS
 ======================================== */
 
-const socialIconBase = 'https://cdn.jsdelivr.net/npm/simple-icons@latest/icons'
-
-// Inline SVG data URLs let the email icon switch to a confirmation mark
-// while using the same background-image treatment as the social icons.
-const mailIconUrl = `data:image/svg+xml,${encodeURIComponent(
-  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3.75 5.25h16.5c.966 0 1.75.784 1.75 1.75v10a1.75 1.75 0 0 1-1.75 1.75H3.75A1.75 1.75 0 0 1 2 17V7c0-.966.784-1.75 1.75-1.75Zm.4 1.5L12 12.15l7.85-5.4H4.15ZM20.5 8.9l-7.98 5.49a.9.9 0 0 1-1.04 0L3.5 8.9V17c0 .138.112.25.25.25h16.5a.25.25 0 0 0 .25-.25V8.9Z"/></svg>',
-)}`
-
-const mailCopiedIconUrl = `data:image/svg+xml,${encodeURIComponent(
-  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.55 17.15 4.4 12l1.5-1.5 3.65 3.65L18.1 5.6l1.5 1.5z"/></svg>',
-)}`
-
-type SocialLink = {
-  name: string
-  icon: string | null
-  href?: string
-  external?: boolean
-  type?: 'copy'
-}
-
-const socialLinks: SocialLink[] = [
-  {
-    name: 'GitHub',
-    href: 'https://github.com/Laurenceonly',
-    external: true,
-    icon: `${socialIconBase}/github.svg`,
-  },
-  {
-    name: 'Email',
-    // Copies the address instead of opening mailto:, which gets scraped by bots.
-    // See copyEmail() below — rendered as a hand-drawn envelope/checkmark.
-    type: 'copy',
-    icon: null,
-  },
-  {
-    name: 'Facebook',
-    href: 'https://www.facebook.com/ralphsayo26/',
-    external: true,
-    icon: `${socialIconBase}/facebook.svg`,
-  },
-  {
-    name: 'Instagram',
-    href: 'https://www.instagram.com/saintlaurenz26/',
-    external: true,
-    icon: `${socialIconBase}/instagram.svg`,
-  },
-]
-
-const emailCopied = ref(false)
-const emailCopyMessage = ref('')
-let emailCopyTimer: ReturnType<typeof setTimeout> | undefined
-
-async function copyEmail() {
-  clearTimeout(emailCopyTimer)
-  emailCopied.value = false
-  emailCopyMessage.value = ''
-  try {
-    if (navigator.clipboard?.writeText) {
-      await navigator.clipboard.writeText(email)
-    } else {
-      // Fallback for browsers/contexts without the async Clipboard API.
-      const temp = document.createElement('textarea')
-      temp.value = email
-      temp.style.position = 'fixed'
-      temp.style.opacity = '0'
-      document.body.appendChild(temp)
-      const previousFocus = document.activeElement as HTMLElement | null
-      try {
-        temp.focus()
-        temp.select()
-        if (!document.execCommand('copy')) throw new Error('Clipboard copy was unavailable')
-      } finally {
-        temp.remove()
-        previousFocus?.focus({ preventScroll: true })
-      }
-    }
-
-    emailCopied.value = true
-    emailCopyMessage.value = 'Copied to clipboard'
-    emailCopyTimer = setTimeout(() => {
-      emailCopied.value = false
-      emailCopyMessage.value = ''
-    }, 2200)
-  } catch (error) {
-    emailCopyMessage.value = `Copy manually: ${email}`
-    console.warn('Could not copy email to clipboard.', error)
-  }
-}
-
 /* ========================================
   CONTACT FORM — FORMSPREE
 ======================================== */
@@ -387,7 +292,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   toolkitMedia?.removeEventListener('change', updateToolkitViewport)
   githubChartResizeObserver?.disconnect()
-  clearTimeout(emailCopyTimer)
 })
 </script>
 
@@ -401,14 +305,14 @@ onBeforeUnmount(() => {
         class="skills-section page-width"
         aria-labelledby="skills-title"
       >
-        <div class="section-heading" data-reveal>
+        <div class="section-heading">
           <div class="section-heading-bottom">
             <h2 id="skills-title">Skills &amp; certifications.</h2>
             <p>Core toolkit across web, mobile, and AI — backed by certifications along the way.</p>
           </div>
         </div>
 
-        <div class="toolkit-categories" :class="{ 'toolkit-instant': toolkitKeyboardNavigation }" data-reveal>
+        <div class="toolkit-categories" :class="{ 'toolkit-instant': toolkitKeyboardNavigation }">
           <div class="toolkit-tabs" role="tablist" aria-label="Stack categories">
             <button
               v-for="(group, index) in skillGroups"
@@ -453,7 +357,7 @@ onBeforeUnmount(() => {
 
         <!-- Certifications -->
 
-        <div class="credentials" data-reveal>
+        <div class="credentials">
           <p class="eyebrow muted">
             CERTIFICATIONS
           </p>
@@ -479,24 +383,6 @@ onBeforeUnmount(() => {
                   {{ cert.issuer }} · {{ cert.date }}
                 </p>
               </div>
-
-              <div class="credential-actions">
-                <a
-                  v-if="cert.pdfUrl"
-                  class="view-certificate-btn"
-                  :href="cert.pdfUrl"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  :aria-label="`View certificate PDF: ${cert.title}`"
-                >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                    <path d="M14 2v6h6" />
-                  </svg>
-
-                  View certificate
-                </a>
-              </div>
             </li>
           </ul>
         </div>
@@ -509,7 +395,7 @@ onBeforeUnmount(() => {
         class="experience-section page-width"
         aria-labelledby="experience-title"
       >
-        <div class="section-heading" data-reveal>
+        <div class="section-heading">
           <div class="section-heading-bottom">
             <h2 id="experience-title">
               Experience &amp; education.
@@ -518,7 +404,7 @@ onBeforeUnmount(() => {
           </div>
         </div>
 
-        <article class="background-row" aria-labelledby="role-title" data-reveal>
+        <article class="background-row" aria-labelledby="role-title">
           <div class="background-meta mono muted">
             <img class="background-logo" src="/images/cruisechef-logo-128.webp" alt="" width="64" height="64" loading="lazy" decoding="async" />
             <p>September 2026–Present</p>
@@ -534,7 +420,7 @@ onBeforeUnmount(() => {
           </div>
         </article>
 
-        <article class="background-row" aria-labelledby="education-title" data-reveal>
+        <article class="background-row" aria-labelledby="education-title">
           <div class="background-meta mono muted">
             <img class="background-logo" src="/images/dnsc-seal-128.webp" alt="" width="64" height="64" loading="lazy" decoding="async" />
             <p>Expected June 2027</p>
@@ -573,7 +459,7 @@ onBeforeUnmount(() => {
         class="contact-section page-width"
         aria-labelledby="contact-title"
       >
-        <div data-reveal>
+        <div>
           <h2 id="contact-title">
             Let's connect.
           </h2>
@@ -666,51 +552,9 @@ onBeforeUnmount(() => {
             <div class="contact-bottom">
               <div class="social-links-group">
                 <p class="mono muted social-links-label">
-                  Social links
+                  Elsewhere
                 </p>
-
-                <div class="social-links-row">
-                  <template v-for="link in socialLinks" :key="link.name">
-                    <button
-                      v-if="link.type === 'copy'"
-                      type="button"
-                      class="social-link"
-                      :class="{ 'is-confirmed': emailCopied }"
-                      :aria-label="emailCopied ? `${email} copied to clipboard` : `Copy email address: ${email}`"
-                      @click="copyEmail"
-                    >
-                      <span
-                        class="social-link-icon"
-                        :style="{ '--tech-icon': `url('${emailCopied ? mailCopiedIconUrl : mailIconUrl}')`, '--social-color': '#0878a8' }"
-                        aria-hidden="true"
-                      />
-                    </button>
-
-                    <a
-                      v-else
-                      class="social-link"
-                      :href="link.href"
-                      :target="link.external ? '_blank' : undefined"
-                      :rel="link.external ? 'noopener noreferrer' : undefined"
-                      :aria-label="link.name"
-                    >
-                      <span
-                        v-if="link.icon"
-                        class="social-link-icon"
-                        :style="{ '--tech-icon': `url('${link.icon}')`, '--social-color': link.name === 'Facebook' ? '#1877f2' : link.name === 'Instagram' ? 'linear-gradient(35deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5)' : 'var(--text)' }"
-                      />
-                    </a>
-                  </template>
-                </div>
-
-                <p
-                  class="copy-feedback mono"
-                  :class="{ 'is-visible': emailCopyMessage }"
-                  role="status"
-                  aria-live="polite"
-                >
-                  {{ emailCopyMessage }}
-                </p>
+                <a class="github-profile-link" href="https://github.com/Laurenceonly" target="_blank" rel="noopener noreferrer">GitHub</a>
               </div>
 
               <p>

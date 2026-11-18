@@ -2,7 +2,6 @@
 import {
   computed,
   nextTick,
-  onBeforeUnmount,
   onMounted,
   ref,
 } from 'vue'
@@ -16,7 +15,7 @@ const PortfolioDetails = defineLazyHydrationComponent('visible', () => import('.
 const siteRoot = ref<HTMLElement | null>(null)
 const colorMode = useColorMode()
 const themeReady = ref(false)
-const themeTransitioning = ref(false)
+let themeTransitioning = false
 
 const currentYear = new Date().getFullYear()
 const mobileMenuOpen = ref(false)
@@ -138,9 +137,31 @@ const themeLabel = computed(() => {
 })
 
 async function toggleTheme() {
-  if (themeTransitioning.value) return
-  colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
-  await nextTick()
+  if (themeTransitioning) return
+  const nextTheme = colorMode.value === 'dark' ? 'light' : 'dark'
+  const applyTheme = async () => {
+    colorMode.preference = nextTheme
+    await nextTick()
+  }
+
+  if (!document.startViewTransition || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    await applyTheme()
+    return
+  }
+
+  themeTransitioning = true
+  try {
+    const scene = new Image()
+    const width = window.matchMedia('(max-width: 720px)').matches ? 768 : 1280
+    scene.src = `/images/hero-${nextTheme === 'light' ? 'day' : 'night'}-${width}.webp`
+    await scene.decode().catch(() => {})
+
+    const transition = document.startViewTransition(applyTheme)
+    void transition.ready.catch(() => {})
+    await transition.finished
+  } finally {
+    themeTransitioning = false
+  }
 }
 
 /* ========================================
@@ -203,8 +224,12 @@ function updateActiveProject() {
   const gallery = projectGallery.value
   const firstCard = gallery?.querySelector<HTMLElement>('.project-card')
   if (!gallery || !firstCard) return
+  const maxScroll = gallery.scrollWidth - gallery.clientWidth
   const step = firstCard.offsetWidth + parseFloat(getComputedStyle(gallery).columnGap || '0')
-  activeProject.value = Math.max(0, Math.min(projects.length - 1, Math.round(gallery.scrollLeft / step)))
+  const index = maxScroll > 0 && gallery.scrollLeft >= maxScroll - 1
+    ? projects.length - 1
+    : Math.round(gallery.scrollLeft / step)
+  activeProject.value = Math.max(0, Math.min(projects.length - 1, index))
 }
 
 function browseProjects(direction: number, animate = true) {
@@ -221,7 +246,6 @@ function browseProjects(direction: number, animate = true) {
   if (!target || !first) return
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   gallery.scrollTo({ left: target.offsetLeft - first.offsetLeft, behavior: animate && !reduceMotion ? 'smooth' : 'instant' })
-  activeProject.value = nextIndex
 }
 
 /* ========================================
@@ -234,23 +258,6 @@ function imageFailed(src: string) {
   failedImages.value[src] = true
 }
 
-/* ========================================
-  ANIMATION LIFECYCLE
-======================================== */
-
-let cleanupMotion: (() => void) | undefined
-let motionPreference: MediaQueryList | undefined
-let motionStarted = false
-let disposed = false
-
-function startMotionWhenEnabled() {
-  if (motionPreference?.matches) initializeMotion()
-  else {
-    cleanupMotion?.()
-    motionStarted = false
-  }
-}
-
 onMounted(() => {
   themeReady.value = true
   // An SSR image can fail before hydration attaches its error listener.
@@ -259,51 +266,6 @@ onMounted(() => {
     const image = siteRoot.value?.querySelector<HTMLImageElement>(`#${item.id} .project-card-preview img`)
     if (image?.complete && image.naturalWidth === 0) imageFailed(item.preview.src)
   }
-  motionPreference = window.matchMedia('(prefers-reduced-motion: no-preference)')
-  motionPreference.addEventListener('change', startMotionWhenEnabled)
-  startMotionWhenEnabled()
-})
-
-function initializeMotion() {
-  if (motionStarted || disposed || !siteRoot.value) return
-  motionStarted = true
-
-  // These one-time reveals need no animation-library download or scroll handler.
-  // Observe the real layout so font/image loading needs no manual refresh.
-  const animations = new Set<Animation>()
-  const waiting = new WeakSet<Element>()
-  const observer = new IntersectionObserver((entries) => {
-    for (const entry of entries) {
-      if (!entry.isIntersecting) {
-        waiting.add(entry.target)
-        continue
-      }
-      observer.unobserve(entry.target)
-      // Keep initially visible content stable without forcing layout on mount.
-      if (!waiting.has(entry.target)) continue
-      const animation = entry.target.animate([
-        { transform: 'translateY(32px)', opacity: 0 },
-        { transform: 'translateY(0)', opacity: 1 },
-      ], { duration: 850, easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)' })
-      animations.add(animation)
-      animation.onfinish = () => animations.delete(animation)
-    }
-  }, { rootMargin: '0px 0px -8% 0px' })
-
-  siteRoot.value.querySelectorAll<HTMLElement>('[data-reveal]').forEach((element) => {
-    observer.observe(element)
-  })
-  cleanupMotion = () => {
-    observer.disconnect()
-    animations.forEach(animation => animation.cancel())
-    animations.clear()
-  }
-}
-
-onBeforeUnmount(() => {
-  disposed = true
-  motionPreference?.removeEventListener('change', startMotionWhenEnabled)
-  cleanupMotion?.()
 })
 </script>
 
@@ -366,8 +328,8 @@ onBeforeUnmount(() => {
             <a class="text-link" href="#work">
               Explore my work
             </a>
-            <a class="text-link" href="/resume/Ralph_Laurence_Sayo_Resume.pdf" download>
-              Download resume
+            <a class="text-link" href="#contact">
+              Get in touch
             </a>
 <button
         class="theme-toggle"
@@ -376,7 +338,6 @@ onBeforeUnmount(() => {
         :aria-checked="colorMode.value === 'dark'"
         :aria-label="themeLabel"
         :title="themeLabel"
-        :disabled="themeTransitioning"
         @click="toggleTheme"
       >
         <span class="theme-toggle-thumb">
@@ -426,7 +387,7 @@ onBeforeUnmount(() => {
         class="work-section page-width"
         aria-labelledby="work-title"
       >
-        <div class="section-heading" data-reveal>
+        <div class="section-heading">
           <div class="section-heading-bottom">
             <h2 id="work-title">
               Selected projects.

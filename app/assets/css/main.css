@@ -310,11 +310,6 @@ summary {
   border-color: var(--muted);
 }
 
-.theme-toggle:disabled {
-  cursor: default;
-  opacity: 0.7;
-}
-
 .theme-toggle-thumb {
   display: grid;
   place-items: center;
@@ -325,7 +320,7 @@ summary {
   box-shadow: 0 1px 3px rgb(0 0 0 / 25%);
   transform: translateX(24px);
   transition:
-    transform 450ms var(--ease-out),
+    transform 220ms var(--ease-out),
     background 250ms ease;
 }
 
@@ -930,49 +925,6 @@ summary {
   opacity: .85;
 }
 
-.credential-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-left: auto;
-  flex: 0 0 auto;
-}
-
-.view-certificate-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  padding: 12px 20px;
-  border: 1px solid #0878a8;
-  border-radius: 999px;
-  background: #0878a8;
-  color: #fff;
-  font-family: var(--mono);
-  font-size: 13px;
-  font-weight: 400;
-  letter-spacing: 0.03em;
-  white-space: nowrap;
-  transition:
-    border-color 250ms ease,
-    color 250ms ease,
-    background 250ms ease;
-}
-
-
-.view-certificate-btn svg {
-  width: 14px;
-  height: 14px;
-  flex: 0 0 auto;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .view-certificate-btn:hover {
-    border-color: #075d83;
-    background: #075d83;
-  }
-}
-
 @media (hover: hover) and (pointer: fine) {
   .credential-item:hover {
     transform: translateY(-4px);
@@ -1001,10 +953,8 @@ summary {
 }
 .credential-icon { width: 32px; height: 32px; }
 .credential-text { align-items: center; }
-.credential-actions { margin: auto 0 0; }
 @media (max-width: 860px) {
   .credential-list { grid-template-columns: 1fr; }
-  .credentials .credential-actions { width: auto; margin: auto 0 0; padding-left: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .credential-item { transition: none; }
@@ -1169,29 +1119,6 @@ summary {
   color: var(--danger);
 }
 
-/* ========================================
-   EMAIL COPY FEEDBACK
-======================================== */
-
-.social-link.is-confirmed {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.copy-feedback {
-  min-height: 15px;
-  max-width: 100%;
-  overflow-wrap: anywhere;
-  text-align: center;
-  color: var(--accent);
-  opacity: 0;
-  transition: opacity 200ms ease;
-}
-
-.copy-feedback.is-visible {
-  opacity: 1;
-}
-
 .social-links-group {
   display: flex;
   flex-direction: column;
@@ -1205,59 +1132,6 @@ summary {
   margin: 0;
   font-size: 13px;
   letter-spacing: 0.1em;
-}
-
-.social-links-row {
-  display: flex;
-  gap: 16px;
-}
-
-.social-link {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 84px;
-  height: 84px;
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  background: none;
-  appearance: none;
-  -webkit-appearance: none;
-  color: var(--muted);
-  transition:
-    transform 250ms var(--ease-out),
-    border-color 250ms ease,
-    color 250ms ease;
-}
-
-.social-link-icon {
-  width: 36px;
-  height: 36px;
-  background-image: var(--tech-icon);
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  grid-area: 1 / 1;
-  filter: invert(1) brightness(1.8);
-  transition: filter 250ms ease;
-}
-
-.light .social-link-icon {
-  filter: none;
-}
-
-.social-link:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .social-link:hover,
-  .social-link:focus-visible {
-    border-color: var(--accent);
-    color: var(--accent);
-    transform: translateY(-3px);
-  }
 }
 
 /* ========================================
@@ -1307,7 +1181,14 @@ summary {
 
 ::view-transition-new(root) {
   z-index: 2;
-  animation: theme-crossfade 220ms ease-out both;
+  animation: theme-crossfade 240ms ease-in-out both;
+}
+
+/* Capture the final colors so the snapshot is the only moving layer. */
+:root:active-view-transition *,
+:root:active-view-transition *::before,
+:root:active-view-transition *::after {
+  transition: none;
 }
 
 @keyframes theme-crossfade {
@@ -1374,17 +1255,6 @@ summary {
 
   .credential-item {
     flex-wrap: wrap;
-  }
-
-  .credential-actions {
-    width: 100%;
-    margin-left: 0;
-    padding-left: 44px;
-  }
-
-  .view-certificate-btn {
-    flex: 1;
-    justify-content: center;
   }
 
   .contact-columns {
@@ -1496,7 +1366,7 @@ summary {
     opacity: 0;
     transform: translateY(-6px);
     pointer-events: none;
-    transition: opacity 160ms var(--ease-out), transform 180ms var(--ease-out), visibility 180ms;
+    transition: opacity 180ms var(--ease-out), transform 180ms var(--ease-out), visibility 0s 180ms;
   }
 
   .main-nav.is-open {
@@ -1504,6 +1374,7 @@ summary {
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
+    transition-delay: 0s;
   }
 
   .mobile-menu-toggle:focus-visible svg path,
@@ -1728,17 +1599,6 @@ summary {
 
   .social-links-group {
     order: 2;
-  }
-
-  .social-link {
-    width: 60px;
-    height: 60px;
-    border-radius: 16px;
-  }
-
-  .social-link-icon {
-    width: 26px;
-    height: 26px;
   }
 
   .contact-form {
@@ -2313,16 +2173,6 @@ summary {
 .contact-form .form-textarea { min-height: 80px; }
 .contact-columns .contact-bottom { gap: 24px; }
 .contact-columns .contact-bottom > p { font-size: 15px; line-height: 1.6; }
-.social-links-row { gap: 10px; }
-.social-links-row .social-link { width: 64px; height: 64px; border-radius: 16px; }
-.social-links-row .social-link-icon {
-  width: 32px;
-  height: 32px;
-  background: var(--social-color);
-  mask: var(--tech-icon) center / contain no-repeat;
-  filter: none;
-}
-.light .social-links-row .social-link-icon { filter: none; }
 @media (max-width: 860px) {
   .contact-section { padding-block: 48px; }
   .contact-columns { gap: 28px; }
@@ -2465,13 +2315,6 @@ summary {
 }
 
 /* Keep the hero artwork and introduction in separate, aligned rows. */
-.skills-section,
-.experience-section,
-.github-section,
-.contact-section {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 900px;
-}
 .hero { display: block; padding-top: 0; }
 .hero::before { content: none; }
 .hero-visual { --hero-scene-height: clamp(320px, 43vw, 430px); --hero-night: url('/images/hero-night-1280.webp'); --hero-day: url('/images/hero-day-1280.webp'); position: relative; isolation: isolate; height: var(--hero-scene-height); container-type: inline-size; }
@@ -2485,18 +2328,12 @@ summary {
   opacity: .65;
   filter: none;
   mask-image: linear-gradient(to bottom, transparent, black 12%, black 68%, transparent 100%);
-  transition: opacity 300ms var(--ease-out);
   pointer-events: none;
 }
-.hero-visual::before { opacity: .65; }
 .hero-visual::after { content: none; }
 .light .hero-visual::before { background-image: var(--hero-day); }
 @media (max-width: 720px) {
   .hero-visual { --hero-night: url('/images/hero-night-768.webp'); --hero-day: url('/images/hero-day-768.webp'); }
-}
-body { transition: background-color 300ms ease, color 300ms ease; }
-@media (prefers-reduced-motion: reduce) {
-  .hero-visual::before, .hero-visual::after, body { transition: none; }
 }
 .hero .hero-portrait-wrap {
   position: absolute;
@@ -2562,7 +2399,6 @@ body { font-size: var(--type-body); line-height: 1.6; }
 .toolkit-item,
 .background-meta,
 .credential-meta,
-.view-certificate-btn,
 .project-card-meta,
 .project-card-links a,
 .project-gallery-controls,
@@ -2573,7 +2409,6 @@ body { font-size: var(--type-body); line-height: 1.6; }
 .form-submit,
 .form-status,
 .social-links-label,
-.copy-feedback,
 .text-link,
 .site-footer {
   font-size: var(--type-label);
@@ -2713,21 +2548,13 @@ body { font-size: var(--type-body); line-height: 1.6; }
     align-self: start;
     visibility: hidden;
     opacity: 0;
-    transform: translateY(6px);
-    transition: opacity 180ms var(--ease-out), transform 220ms var(--ease-out), visibility 0s 180ms;
   }
   .toolkit-panel.is-active {
     visibility: visible;
     opacity: 1;
-    transform: translateY(0);
-    transition-delay: 0s;
+    transition: opacity 180ms var(--ease-out);
   }
   .toolkit-categories .toolkit-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px 8px; }
   .toolkit-categories .toolkit-item { font-size: 11px; }
   .toolkit-instant .toolkit-panel { transition: none; }
-}
-@media (max-width: 720px) and (prefers-reduced-motion: reduce) {
-  .toolkit-panel { transform: none; transition: opacity 100ms ease, visibility 0s 100ms; }
-  .toolkit-panel.is-active { transition-delay: 0s; }
-  .toolkit-tab { transition: none; }
 }
